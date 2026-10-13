@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parth & Kinjal - Wedding Invitation</title>
+    <style>
+        /* 1. GLOBAL SETTINGS & CSS VARIABLES (MATTE COLOURS) */
+        :root {
+            /* DAY MODE COLOURS (Default) */
+            --bg-hero: #8C9A8E;      /* Soft Sage Green */
+            --bg-sangeet: #B5A89E;   /* Warm Taupe */
+            --bg-wedding: #F8F5F0;   /* Alabaster Cream */
+            --bg-footer: #C5A880;    /* Matte Gold/Copper */
+            --text-main: #2C3E50;    /* Dark Charcoal for readability */
+            --text-light: #ffffff;
+            --particle-color: rgba(230, 184, 184, 0.7); /* Dusty Rose Petals */
+        }
+
+        body.night-mode {
+            /* NIGHT MODE COLOURS */
+            --bg-hero: #1A2436;      /* Midnight Navy Blue */
+            --bg-sangeet: #3A404A;   /* Muted Slate Grey */
+            --bg-wedding: #183028;   /* Deep Emerald Green */
+            --bg-footer: #111827;    /* Deep Charcoal */
+            --text-main: #F8F5F0;    /* Alabaster text for dark background */
+            --text-light: #F8F5F0;
+            --particle-color: rgba(255, 215, 0, 0.6); /* Burnished Gold Lanterns */
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Georgia', serif; 
+            overflow-x: hidden; 
+            background-color: var(--bg-hero);
+            color: var(--text-main);
+            transition: background-color 0.8s ease, color 0.8s ease;
+        }
+
+        /* 2. THE FLOATING PARTICLES (PETALS / LANTERNS) */
+        #particles-container {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 1; overflow: hidden;
+        }
+        .particle {
+            position: absolute;
+            background-color: var(--particle-color);
+            border-radius: 50%;
+            transition: background-color 0.8s ease;
+        }
+        /* Day Mode (Falling Petals) */
+        .falling { animation: fall linear infinite; border-radius: 50% 0 50% 50%; }
+        @keyframes fall {
+            0% { transform: translateY(-10vh) rotate(0deg); opacity: 0; }
+            20% { opacity: 1; }
+            100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+        }
+        /* Night Mode (Floating Lanterns) */
+        body.night-mode .particle { animation: float-up linear infinite; border-radius: 5px; box-shadow: 0 0 10px var(--particle-color); }
+        @keyframes float-up {
+            0% { transform: translateY(110vh) rotate(0deg); opacity: 0; }
+            20% { opacity: 1; }
+            100% { transform: translateY(-10vh) rotate(45deg); opacity: 0; }
+        }
+
+        /* 3. LAYOUT & TYPOGRAPHY */
+        .section {
+            min-height: 100vh;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            text-align: center; padding: 60px 20px;
+            position: relative; z-index: 2;
+            transition: background-color 0.8s ease;
+        }
+        
+        /* Section Background Assignments */
+        #hero { background-color: var(--bg-hero); color: var(--text-light); }
+        #sangeet { background-color: var(--bg-sangeet); color: var(--text-light); }
+        #wedding { background-color: var(--bg-wedding); color: var(--text-main); }
+        #footer { background-color: var(--bg-footer); color: var(--text-light); }
+
+        h1 { font-size: 3.5rem; letter-spacing: 3px; font-style: italic; margin: 20px 0; font-weight: normal; }
+        h2 { font-size: 2.2rem; margin-bottom: 15px; font-weight: normal; letter-spacing: 1px; }
+        p { font-size: 1.1rem; line-height: 1.8; margin-bottom: 5px; }
+        .small-text { font-size: 0.95rem; font-style: italic; opacity: 0.9; margin-bottom: 10px; }
+        
+        /* The Photos */
+        .photo-box {
+            width: 280px; height: 380px;
+            background: rgba(255,255,255,0.15);
+            border: 2px solid rgba(255,255,255,0.4);
+            border-radius: 15px; margin: 25px auto;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.9rem; font-style: italic; color: inherit;
+            backdrop-filter: blur(5px);
+        }
+        #wedding .photo-box { border-color: rgba(0,0,0,0.2); }
+
+        /* Buttons & Toggles */
+        .btn {
+            display: inline-block; margin-top: 20px; padding: 12px 30px;
+            background-color: transparent; border: 1px solid currentColor;
+            color: inherit; text-decoration: none; border-radius: 30px;
+            font-size: 1rem; transition: 0.3s; letter-spacing: 1px;
+        }
+        .btn:hover { background-color: currentColor; color: var(--bg-hero); }
+
+        #theme-toggle {
+            position: fixed; top: 20px; right: 20px; z-index: 100;
+            padding: 10px 20px; border-radius: 20px; cursor: pointer;
+            background: rgba(255,255,255,0.2); backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.5); color: white;
+            font-family: inherit; font-size: 0.9rem; transition: 0.3s;
+        }
+        body.night-mode #theme-toggle { background: rgba(0,0,0,0.4); border-color: rgba(255,215,0,0.5); color: #F8F5F0; }
+
+        /* 4. SCROLL REVEAL ANIMATIONS */
+        .reveal { opacity: 0; transform: translateY(50px); transition: all 1s ease-out; }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+        .delay-1 { transition-delay: 0.3s; }
+        .delay-2 { transition-delay: 0.6s; }
+    </style>
+</head>
+<body>
+
+    <!-- Theme Toggle Button -->
+    <button id="theme-toggle" onclick="toggleTheme()">Switch to Night Mode</button>
+
+    <!-- Floating Background Elements -->
+    <div id="particles-container"></div>
+
+    <!-- PAGE 1: HERO / ENTRY -->
+    <section id="hero" class="section">
+        <div class="reveal">
+            <p class="small-text">|| Shree Ganeshay Namah ||</p>
+            <p class="small-text">With the blessings of</p>
+            <p><strong>Smt. Pushpa Mulji Gada</strong></p>
+            <br>
+            <p class="small-text">Smt. Sushila & Shri Dharmendra Mulji Gada<br>cordially invite you to the wedding of</p>
+        </div>
+        
+        <div class="reveal delay-1 photo-box">
+            [ ADD REAL COUPLE PHOTO HERE ]<br>(<img src="" alt="Will go here">)
+        </div>
+        
+        <div class="reveal delay-2">
+            <h1>PARTH<br>&<br>KINJAL</h1>
+            <p class="small-text">(Beloved daughter of Smt. Shilpa & Shri Dhiraj Meghji Charla)</p>
+            <p style="margin-top: 40px; font-size: 0.8rem; letter-spacing: 2px;">SCROLL TO ENTER ↓</p>
+        </div>
+    </section>
+
+    <!-- PAGE 2: SANGEET -->
+    <section id="sangeet" class="section">
+        <div class="reveal">
+            <h2>Sangeet Sandhya</h2>
+        </div>
+        <div class="reveal delay-1 photo-box">
+            [ ADD ILLUSTRATED COUPLE PHOTO HERE ]<br>(For Animated/Playful Vibe)
+        </div>
+        <div class="reveal delay-2">
+            <p><strong>Saturday, 20th February 2027</strong></p>
+            <p>Time: 7:00 PM onwards</p>
+            <br>
+            <p class="small-text">Bhanushali Banquets<br>Bhanushali Wadi, 1, Bhanushali Lane,<br>Pant Nagar, Ghatkopar East, Mumbai - 400077</p>
+            <a href="https://maps.google.com" target="_blank" class="btn">View Directions</a>
+        </div>
+    </section>
+
+    <!-- PAGE 3: WEDDING (NOTE: IT'S IN A GROUND) -->
+    <section id="wedding" class="section">
+        <div class="reveal">
+            <h2>Wedding Ceremony</h2>
+        </div>
+        <div class="reveal delay-1 photo-box">
+            [ ADD REAL COUPLE PHOTO HERE ]<br>(Soft / Cinematic Shot)
+        </div>
+        <div class="reveal delay-2">
+            <p><strong>Monday, 22nd February 2027</strong></p>
+            <p>Time: 5:15 PM onwards</p>
+            <br>
+            <p class="small-text">JVPD Ground (Juhu Vile Parle Development)<br>30, Devle Road, Opposite PVR Cinemas,<br>Juhu, Mumbai - 400049</p>
+            <p class="small-text" style="font-size: 0.8rem;">(An Open-Air Garden Celebration)</p>
+            <a href="https://maps.google.com" target="_blank" class="btn">View Directions</a>
+        </div>
+    </section>
+
+    <!-- PAGE 4: FOOTER / RSVP -->
+    <section id="footer" class="section">
+        <div class="reveal">
+            <p class="small-text" style="margin-bottom: 20px;">With Best Compliments From:</p>
+            <p style="font-size: 1.4rem;"><strong>Dheer Dharmendra Gada<br>Vihan Dharmendra Gada</strong></p>
+            <br>
+            <p class="small-text">(And the entire Gada & Charla Families)</p>
+            <br><br>
+            <a href="https://wa.me/919876543210" target="_blank" class="btn" style="background: white; color: var(--bg-footer); border: none;">RSVP via WhatsApp</a>
+        </div>
+    </section>
+
+    <!-- JAVASCRIPT FOR LOGIC -->
+    <script>
+        // 1. Scroll Reveal Logic (Fade in one by one)
+        const observerOptions = { root: null, rootMargin: '0px', threshold: 0.2 };
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.reveal').forEach((element) => {
+            observer.observe(element);
+        });
+
+        // 2. Day / Night Theme Toggle
+        const themeBtn = document.getElementById('theme-toggle');
+        function toggleTheme() {
+            document.body.classList.toggle('night-mode');
+            if (document.body.classList.contains('night-mode')) {
+                themeBtn.textContent = "Switch to Day Mode";
+            } else {
+                themeBtn.textContent = "Switch to Night Mode";
+            }
+        }
+
+        // 3. Floating Particles (Petals & Lanterns) Generator
+        const particleContainer = document.getElementById('particles-container');
+        const particleCount = 25; // Number of floating items
+
+        for (let i = 0; i < particleCount; i++) {
+            let particle = document.createElement('div');
+            particle.classList.add('particle', 'falling');
+            
+            // Randomize size, starting position, and animation speed
+            let size = Math.random() * 15 + 10; // Between 10px and 25px
+            particle.style.width = size + 'px';
+            particle.style.height = size + 'px';
+            particle.style.left = Math.random() * 100 + 'vw';
+            particle.style.animationDuration = (Math.random() * 5 + 5) + 's'; // 5s to 10s
+            particle.style.animationDelay = (Math.random() * 5) + 's';
+            
+            particleContainer.appendChild(particle);
+        }
+    </script>
+</body>
+</html>
